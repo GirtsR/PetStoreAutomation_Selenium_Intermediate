@@ -1,6 +1,9 @@
 package common;
 
+import com.aventstack.extentreports.Status;
+import common.reporters.ExtentReportManager;
 import io.github.bonigarcia.wdm.WebDriverManager;
+import io.qameta.allure.Allure;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.remote.RemoteWebDriver;
@@ -29,8 +32,11 @@ public class TestBase {
         return remoteDriver.get();
     }
 
-    public static void initializeDriver() {
+    public static void setupChromeDriver() {
         WebDriverManager.chromedriver().setup();
+    }
+
+    public static void initializeDriver() {
         remoteDriver.set(new ChromeDriver());
         wait.set(new WebDriverWait(getDriver(), implicitWait));
     }
@@ -97,8 +103,9 @@ public class TestBase {
         System.err.println(failMessage);
         Reporter.log(failMessage);
         Reporter.getCurrentTestResult().setStatus(ITestResult.FAILURE);
+        ExtentReportManager.logMessage(Status.FAIL, failMessage);
+        Allure.addAttachment("failTest", failMessage);
         if (stopTest) {
-            closeDriver();
             throw new AssertionError(failMessage);
         }
     }
@@ -107,6 +114,8 @@ public class TestBase {
     // region Logging
     public static void logInfo(String message) {
         Reporter.log(message, true);
+        ExtentReportManager.logMessage(message);
+        Allure.attachment("logInfo", message);
     }
     // endregion
 
