@@ -3,15 +3,28 @@ package utils;
 import com.aventstack.extentreports.markuputils.ExtentColor;
 import common.TestBase;
 import common.reporters.ExtentReportManager;
+import common.reporters.SlackReporter;
 import org.testng.ITestContext;
 import org.testng.ITestListener;
 import org.testng.ITestResult;
 
+import java.util.Arrays;
+
+/**
+ * Listens to events emitted by TestNG framework ITestListener interface
+ * Handles creation of reports, initializing and closing browser sessions,
+ * sending Slack report after test finish
+ */
 public class TestNGTestListener implements ITestListener {
     @Override
     public void onTestStart(ITestResult result) {
         TestBase.initializeDriver();
-        ExtentReportManager.startTest(result.getName(), result.getMethod().getDescription());
+        var testName = result.getName();
+        if (result.getParameters().length != 0) {
+            // Append test parameters to the test name in the Extent report
+            testName +=  Arrays.toString(result.getParameters());
+        }
+        ExtentReportManager.startTest(testName, result.getMethod().getDescription());
         ExtentReportManager.logLabel("Test started");
     }
 
@@ -57,5 +70,11 @@ public class TestNGTestListener implements ITestListener {
     @Override
     public void onFinish(ITestContext context) {
         ExtentReportManager.flushReport();
+        var slackMessage = String.format("Test results are ready! Passed: %d, failed: %d, skipped: %d",
+                context.getPassedTests().size(),
+                context.getFailedTests().size(),
+                context.getSkippedTests().size()
+        );
+        SlackReporter.sendTestReport(slackMessage, ExtentReportManager.TEST_REPORT_PATH);
     }
 }

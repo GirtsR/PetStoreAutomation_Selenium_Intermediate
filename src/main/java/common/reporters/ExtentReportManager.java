@@ -9,10 +9,14 @@ import com.aventstack.extentreports.reporter.ExtentSparkReporter;
 import common.ConfigReader;
 import org.testng.ITestResult;
 
+/**
+ * Manager class for generating Extent reports
+ * Hooked up to TestNGTestListener methods and TestBase.logInfo/failTest
+ */
 public class ExtentReportManager {
     private static ExtentReports extentReport;
 
-    private static final String TEST_REPORT_PATH = ConfigReader.getProperties().getProperty("extent.report.path");
+    public static final String TEST_REPORT_PATH = ConfigReader.getProperties().getProperty("extent.report.path");
 
     private static final ThreadLocal<ExtentTest> currentTest = new ThreadLocal<>();
 

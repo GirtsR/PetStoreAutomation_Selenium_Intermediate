@@ -6,6 +6,10 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.Properties;
 
+
+/**
+ * Helper class to read the key=value pairs from the configuration.properties file
+ */
 public class ConfigReader {
     private static ThreadLocal<Properties> properties = new ThreadLocal<>();
 

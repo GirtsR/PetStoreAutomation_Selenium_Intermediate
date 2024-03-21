@@ -15,6 +15,17 @@ import utils.Locator;
 
 import java.time.Duration;
 
+/**
+ * Generic logic of the testing framework
+ * 1) ConfigReader creation
+ * 2) Initializing Selenium (Automatic Chromedriver installation using the WebDriverManager library
+ * 3) Default command wait implementation (20 seconds)
+ * 4) WebElement retrieval
+ * 5) Waiting for page loaded using JavascriptExecutor and document.readyState
+ * 6) Test failure handling
+ * 7) Logging
+ * 8) navigateToUrl helper
+ */
 public class TestBase {
     private static final Duration implicitWait = Duration.ofSeconds(20);
 
@@ -118,5 +129,10 @@ public class TestBase {
         Allure.attachment("logInfo", message);
     }
     // endregion
+
+    public static void navigateToUrl(String url) {
+        getDriver().get(url);
+        waitForPageLoaded();
+    }
 
 }
